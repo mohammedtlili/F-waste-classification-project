@@ -52,12 +52,12 @@ x_train,x_validate,y_train,y_validate = train_test_split(x_train, y_train, test_
 
 
 
-print ("x_train shape: " + str(x_train.shape))
-print ("x_train shape: " + str(y_train.shape))
-print ("x_validate shape: " + str(x_validate.shape))
-print ("y_validate shape: " + str(y_validate.shape))
-print ("x_test shape: " + str(x_test.shape))
-print ("y_test shape: " + str(y_test.shape))
+print(f"x_train shape: {str(x_train.shape)}")
+print(f"x_train shape: {str(y_train.shape)}")
+print(f"x_validate shape: {str(x_validate.shape)}")
+print(f"y_validate shape: {str(y_validate.shape)}")
+print(f"x_test shape: {str(x_test.shape)}")
+print(f"y_test shape: {str(y_test.shape)}")
 
 def convert_image_to_array(files):
     width, height, channels = 64, 64, 3
@@ -129,21 +129,21 @@ model.add(Conv2D(32, (3,3),kernel_initializer='he_uniform',padding='same', kerne
 model.add(Activation('elu'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 model.add(Dropout(0.2))
- 
+
 model.add(Conv2D(64, (3,3),kernel_initializer='he_uniform',padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('elu'))
 model.add(Conv2D(64, (3,3),kernel_initializer='he_uniform',padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('elu'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 model.add(Dropout(0.3))
- 
+
 model.add(Conv2D(128, (3,3),kernel_initializer='he_uniform',padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('elu'))
 model.add(Conv2D(128, (3,3),kernel_initializer='he_uniform',padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('elu'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 model.add(Dropout(0.4))
- 
+
 model.add(Flatten())
 #model.add(Dense(128, activation='relu',kernel_initializer='he_uniform'))
 #model.add(BatchNormalization())
@@ -152,10 +152,10 @@ model.add(Dense(NUM_CLASSES,activation='softmax'))
 
 model.compile(loss = "binary_crossentropy",
               optimizer = "adam",
-              metrics = ["accuracy"]) 
+              metrics = ["accuracy"])
 batch_size = 256
 
-train_datagen = ImageDataGenerator(rescale= 1./255) 
+train_datagen = ImageDataGenerator(rescale= 1./255)
 test_datagen = ImageDataGenerator(rescale= 1./255)
 
 train_generator = train_datagen.flow_from_directory(
@@ -192,14 +192,17 @@ plt.show()
 test_x, test_y = test_generator.__getitem__(1)
 
 labels = (test_generator.class_indices)
-labels = dict((v,k) for k,v in labels.items())
+labels = {v: k for k,v in labels.items()}
 
 preds = model.predict(test_x)
 
 plt.figure(figsize=(16, 16))
 for i in range(15):
     plt.subplot(4, 4, i+1)
-    plt.title('pred:%s / truth:%s' % (labels[np.argmax(preds[i])], labels[np.argmax(test_y[i])]))
+    plt.title(
+        f'pred:{labels[np.argmax(preds[i])]} / truth:{labels[np.argmax(test_y[i])]}'
+    )
+
     plt.imshow(test_x[i])
 
 # Save the model as a file
@@ -222,5 +225,5 @@ open(tflite_filename, 'wb').write(tflite_model)
 converter =tf.lite.TFLiteConverter.from_keras_model(model)
 converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_SIZE]
 tflite_model = converter.convert()
-open(tflite_filename + '.tflite', 'wb').write(tflite_model)
+open(f'{tflite_filename}.tflite', 'wb').write(tflite_model)
 
