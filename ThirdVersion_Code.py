@@ -7,11 +7,12 @@ Original file is located at
     https://colab.research.google.com/drive/110F9rkcdwLfK0zKjO45yoJkh-YvxXq-K
 """
 
+
 #importation des bibliothèques
-import pandas as pd 
-import numpy as np 
-import matplotlib.pyplot as plt 
-from keras.models import Sequential 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Activation, Dropout, Flatten, Dense, BatchNormalization
 from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from keras.utils.vis_utils import plot_model
@@ -23,7 +24,7 @@ warnings.filterwarnings('ignore')
 import os
 import h5py
 from tensorflow import keras
-from tensorflow.keras.utils import to_categorical 
+from tensorflow.keras.utils import to_categorical
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D,Activation,BatchNormalization
 import matplotlib.pyplot as plt
@@ -34,30 +35,30 @@ from tensorflow.keras.utils import plot_model
 Train_path = '/content/drive/MyDrive/Colab Notebooks/Raskelny/DATASET/TRAIN'
 Test_path = '/content/drive/MyDrive/Colab Notebooks/Raskelny/DATASET/TEST'
 
-x_test = [] 
+x_test = []
 y_test = [] 
 
-for category in glob(Test_path+'/*'):
+for category in glob(f'{Test_path}/*'):
     for file in tqdm(glob(category+'/*')):
         img_array=cv2.imread(file)
         img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
         x_test.append(img_array) 
         y_test.append(category.split("/")[-1])
-        
-        
+
+
 test=pd.DataFrame({'image': x_test,'label': y_test})
 
-x_train = [] 
+x_train = []
 y_train = [] 
 
-for category in glob(Train_path+'/*'):
+for category in glob(f'{Train_path}/*'):
     for file in tqdm(glob(category+'/*')):
         img_array=cv2.imread(file)
         img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
         x_train.append(img_array) 
         y_train.append(category.split("/")[-1])
-        
-        
+
+
 train=pd.DataFrame({'image': x_train,'label': y_train})
 
 train.shape
@@ -89,7 +90,7 @@ for i in range(5):
     plt.imshow(train.image[index])
     plt.tight_layout()
 
-className = glob(Train_path + '/*' )
+className = glob(f'{Train_path}/*')
 numberOfClass = len(className)
 print("Number Of Class: ",numberOfClass)
 
@@ -102,12 +103,12 @@ INPUT_SHAPE=np.shape(x_train[1])
 ##Convolutional Neural Network - CNN
 from tensorflow.keras import regularizers
 model = Sequential()
-weight_decay = 1e-4 
+weight_decay = 1e-4
 model.add(Conv2D(32,(3,3),input_shape = (64,64,3),padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation("relu"))
 model.add(MaxPooling2D())
 
-model.add(Conv2D(64,(3,3),padding='same',kernel_regularizer=regularizers.l2(weight_decay)))  
+model.add(Conv2D(64,(3,3),padding='same',kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation("relu"))
 model.add(MaxPooling2D())
 
